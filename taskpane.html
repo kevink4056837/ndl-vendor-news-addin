@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NDL Vendor News</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #1f2937; }
+
+    /* ── Header ─────────────────────────────────── */
+    .header {
+      background: #0f4c5c;
+      color: #fff;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-icon {
+      width: 36px; height: 36px;
+      background: #14b8a6;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px; color: #fff;
+    }
+    .header h1 { font-size: 17px; font-weight: 700; }
+    .header p { font-size: 11px; opacity: .75; margin-top: 1px; }
+
+    /* ── Email preview card ────────────────────── */
+    .email-card {
+      background: #fff;
+      margin: 14px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 14px 16px;
+    }
+    .email-subject { font-weight: 700; font-size: 14px; color: #1f2937; margin-bottom: 4px; }
+    .email-from { font-size: 12px; color: #6b7280; margin-bottom: 8px; }
+    .email-body-preview {
+      font-size: 12px; color: #6b7280;
+      line-height: 1.5;
+      max-height: 80px; overflow: hidden;
+      padding: 8px 10px;
+      background: #f9fafb;
+      border-radius: 6px;
+      border: 1px solid #f0f0f0;
+    }
+    .email-att-row {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-top: 8px;
+    }
+    .email-att-chip {
+      font-size: 11px; color: #374151;
+      background: #f3f4f6; border: 1px solid #e5e7eb;
+      padding: 3px 8px; border-radius: 5px;
+    }
+
+    /* ── Form ───────────────────────────────────── */
+    .form-section { padding: 0 14px 14px; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label {
+      display: block; font-size: 11px; font-weight: 600;
+      color: #6b7280; text-transform: uppercase;
+      letter-spacing: .5px; margin-bottom: 5px;
+    }
+    .form-group label .required { color: #ef4444; }
+    .form-group select,
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      color: #1f2937;
+      background: #fff;
+      transition: border-color .15s;
+    }
+    .form-group select:focus,
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #14b8a6;
+      box-shadow: 0 0 0 2px rgba(20,184,166,.15);
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+
+    /* ── Attachment toggle ──────────────────────── */
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; margin: 0 14px 12px;
+      background: #fff; border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+    .toggle-row span { font-size: 12px; font-weight: 500; color: #374151; }
+    .toggle-switch {
+      position: relative; width: 42px; height: 24px;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; cursor: pointer; inset: 0;
+      background: #d1d5db; border-radius: 24px;
+      transition: .2s;
+    }
+    .toggle-slider:before {
+      content: ''; position: absolute;
+      height: 18px; width: 18px;
+      left: 3px; bottom: 3px;
+      background: #fff; border-radius: 50%;
+      transition: .2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: #14b8a6; }
+    .toggle-switch input:checked + .toggle-slider:before { transform: translateX(18px); }
+
+    /* ── Submit button ──────────────────────────── */
+    .submit-btn {
+      display: block; width: calc(100% - 28px);
+      margin: 6px 14px 14px;
+      padding: 12px;
+      background: #0f4c5c;
+      color: #fff;
+      border: none; border-radius: 10px;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .submit-btn:hover { background: #0d3d4a; }
+    .submit-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+
+    /* ── Status message ─────────────────────────── */
+    .status {
+      margin: 0 14px 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 12px; font-weight: 600;
+      display: none; text-align: center;
+    }
+    .status.success { display: block; background: #d1fae5; color: #065f46; }
+    .status.error { display: block; background: #fee2e2; color: #991b1b; }
+    .status.loading { display: block; background: #dbeafe; color: #1e40af; }
+
+    /* ── Footer ─────────────────────────────────── */
+    .footer {
+      text-align: center; padding: 12px;
+      font-size: 10px; color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">VN</div>
+    <div>
+      <h1>Vendor News</h1>
+      <p>From email → NDL_VendorNews list</p>
+    </div>
+  </div>
+
+  <!-- Email preview -->
+  <div class="email-card">
+    <div class="email-subject" id="emailSubject">Loading...</div>
+    <div class="email-from" id="emailFrom"></div>
+    <div class="email-body-preview" id="emailBodyPreview"></div>
+    <div class="email-att-row" id="emailAttachments" style="display:none;"></div>
+  </div>
+
+  <!-- Form -->
+  <div class="form-section">
+    <div class="form-group">
+      <label>Vendor <span class="required">*</span></label>
+      <select id="vendorSelect">
+        <option value="">Select vendor...</option>
+        <option value="Stûv">Stûv</option>
+        <option value="Kozy Heat">Kozy Heat</option>
+        <option value="ICC-RSF">ICC-RSF</option>
+        <option value="Pacific Energy">Pacific Energy</option>
+        <option value="Town & Country">Town &amp; Country</option>
+        <option value="Kuma">Kuma</option>
+        <option value="Lexington Hearth">Lexington Hearth</option>
+        <option value="GMG">GMG</option>
+        <option value="Ortal">Ortal</option>
+        <option value="RPG">RPG</option>
+        <option value="Isokern">Isokern</option>
+        <option value="Amantii">Amantii</option>
+        <option value="Dimplex">Dimplex</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Category</label>
+      <select id="categorySelect">
+        <option value="">Auto-detect (AI)</option>
+        <option value="Product Update">Product Update</option>
+        <option value="Price Change">Price Change</option>
+        <option value="Promotion">Promotion</option>
+        <option value="Discontinuation">Discontinuation</option>
+        <option value="New Product">New Product</option>
+        <option value="General">General</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Headline <span class="required">*</span></label>
+      <input type="text" id="newsTitle" placeholder="News headline (pre-filled from subject)"/>
+    </div>
+
+    <div class="form-group">
+      <label>Notes <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#9ca3af;">(optional)</span></label>
+      <textarea id="newsNotes" placeholder="Add context or notes..."></textarea>
+    </div>
+  </div>
+
+  <!-- Attachment toggle -->
+  <div class="toggle-row" id="attachToggleRow" style="display:none;">
+    <span>Include email attachments</span>
+    <label class="toggle-switch">
+      <input type="checkbox" id="includeAttachments" checked/>
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <!-- Status -->
+  <div class="status" id="statusMsg"></div>
+
+  <!-- Submit -->
+  <button class="submit-btn" id="submitBtn" disabled>Select a vendor to continue</button>
+
+  <!-- Footer -->
+  <div class="footer">NDL Vendor News v1.0 — Northeast Distribution</div>
+
+  <script src="taskpane.js?v=1"></script>
+</body>
+</html>
