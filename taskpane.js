@@ -370,6 +370,9 @@ function escapeRegex(str) {
 function htmlToCleanText(html) {
   if (!html) return "";
   var text = html;
+  // Remove style/script blocks (tag + content) before stripping tags
+  text = text.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "");
+  text = text.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "");
   text = text.replace(/<br\s*\/?>/gi, "\n");
   text = text.replace(/<\/p>/gi, "\n\n");
   text = text.replace(/<\/div>/gi, "\n");
